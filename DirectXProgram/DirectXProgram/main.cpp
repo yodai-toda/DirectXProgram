@@ -1,4 +1,9 @@
-#include<Windows.h>
+#include <Windows.h>
+#include "DirectGraphics.h"
+
+// pragma commentによるlibファイルの設定
+#pragma comment(lib,"d3d9.lib")
+#pragma comment(lib,"d3dx9.lib")
 
 /*
 	ウィンドウプロシージャ
@@ -13,9 +18,17 @@
 */
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam)
 {
-	// メッセージを何も対応しないときに実行する関数
-	// 引数にはウィンドウプロシージャで渡されている引数そのまま渡す
-	return DefWindowProc(window_handle, message_id, wparam, lparam);
+	switch (message_id)
+	{
+	case WM_CLOSE:
+		PostQuitMessage(0);
+		break;
+	default:
+		// メッセージを何も対応しないときに実行する関数
+		// 引数にはウィンドウプロシージャで渡されている引数そのまま渡す
+		return DefWindowProc(window_handle, message_id, wparam, lparam);
+	}
+	return 0;
 }
 
 /*
@@ -34,7 +47,7 @@ int APIENTRY WinMain(
 	INT		  nCmdShow)
 {
 	// ウィンドウの生成(メインループ前)
-	WNDCLASSA window_class =
+	WNDCLASS window_class =
 	{
 		CS_HREDRAW | CS_VREDRAW,			// クラスのスタイル(CS_HREDRAW と CS_VREDRAWは横と縦の変更許可設定)
 		WindowProcedure,					// ●ウィンドウプロシージャ
@@ -45,7 +58,8 @@ int APIENTRY WinMain(
 		LoadCursor(nullptr, IDC_ARROW),		// カーソル画像
 		nullptr,							// 背景ブラシ
 		nullptr,							// メニュー名
-		"WindowClass",						// ●クラス名
+		// TEXT() char* => wchar_t* に変換してくれる
+		TEXT("WindowClass"),				// ●クラス名
 	};
 
 	// 初期化したウィンドウ情報を登録する
@@ -54,7 +68,7 @@ int APIENTRY WinMain(
 			ウィンドウ情報を登録する関数
 		戻り値	非0 => 登録成功、	0 => 登録失敗
 	*/
-	if (RegisterClassA(&window_class) == 0)
+	if (RegisterClass(&window_class) == 0)
 	{
 		// 失敗
 		return 0;
@@ -65,29 +79,79 @@ int APIENTRY WinMain(
 
 
 	// ウィンドウ作成
-	HWND window_handle = CreateWindowA(
-		// 登録しているウィンドウクラス構造体の名前
-		"WindowClass",
-		// ウィンドウ名(タイトルバーに表示される)
-		"ウィンドウ生成サンプル",
+	HWND window_handle = CreateWindow(
+		// ●登録しているウィンドウクラス構造体の名前
+		TEXT("WindowClass"),
+		// ●ウィンドウ名(タイトルバーに表示される文字列)
+		TEXT("ウィンドウ生成サンプル"),
 		// ウィンドウスタイル
 		(WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME),
-		// 表示位置
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		// サイズ
+		// ●表示位置
+		/*
+			ウィンドウを表示する位置を指定する
+			(CW_USEDEFAULT => OS任せ)
+		*/
+		CW_USEDEFAULT,	// x軸
+		CW_USEDEFAULT,	// y軸
+		// ●サイズ => ウィンドウのサイズ
 		width,
 		height,
 		// 親ハンドル
 		NULL,
 		// メニューハンドル
 		NULL,
-		// インスタンスハンドル
+		// ●インスタンスハンドル
+		// WinMainの第一引数を使用
 		hInstance,
 		// WM_CREATEメッセージでlpparamに渡したい値
 		NULL);
 
+	RECT window_rect;
+
+	if (GetWindowRect(window_handle, &window_rect) == false)
+	{
+		// 失敗
+		return 0;
+	}
+
+	RECT client_rect;
+
+	if (GetClientRect(window_handle, &client_rect) == false)
+	{
+		// 失敗
+		return 0;
+	}
+
+	// フレームサイズの算出
+	int frame_size_x = (window_rect.right - window_rect.left) - (client_rect.right - client_rect.left);
+	int frame_size_y = (window_rect.bottom - window_rect.top) - (client_rect.bottom - client_rect.top);
+
+	// リサイズ用のサイズの算出
+	int resize_width = frame_size_x + width;
+	int resize_height = frame_size_y + height;
+
+	// ウィンドウサイズの更新
+	SetWindowPos(
+		window_handle,
+		nullptr,
+		// 表示座標
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		// ●リサイズの横幅
+		resize_width,
+		// ●リサイズの縦幅
+		resize_height,
+		// オプションの設定
+		SWP_NOMOVE
+	);
+
+	// ウィンドウ表示
 	ShowWindow(window_handle, SW_SHOW);
+
+	if (InitDirectGraphics(window_handle) == false)
+	{
+		return 0;
+	}
 
 	// メインループ
 	while (true)
@@ -120,10 +184,17 @@ int APIENTRY WinMain(
 		*/
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
 		{
-			// 受信したデータを翻訳する
-			TranslateMessage(&message);
-			// ウィンドウプロシージャの送信する
-			DispatchMessage(&message);
+			if (message.message == WM_QUIT)
+			{
+				break;
+			}
+			else
+			{
+				// 受信したデータを翻訳する
+				TranslateMessage(&message);
+				// ウィンドウプロシージャの送信する
+				DispatchMessage(&message);
+			}			
 		}
 		else
 		{
@@ -131,6 +202,10 @@ int APIENTRY WinMain(
 			// ゲーム処理と描画処理を実装する
 		}
 	}
+
+	// 解放
+	ReleaseDirectGraphics();
+
 	return 0;
 }
 
