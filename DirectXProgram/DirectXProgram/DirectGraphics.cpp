@@ -1,4 +1,4 @@
-#include "DirectGraphics.h"
+ï»¿#include "DirectGraphics.h"
 
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
@@ -8,67 +8,67 @@ bool InitDirectGraphics(HWND window_handle)
 {
 	/*
 		Direct3DCreate9
-			IDirect3D9¶¬ŠÖ”
+			IDirect3D9ç”Ÿæˆé–¢æ•°
 
-			ˆø”F
-				DirectX‚Ìƒo[ƒWƒ‡ƒ“(D3D_SDK_VERSIONŒÅ’è)
+			å¼•æ•°ï¼š
+				DirectXã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³(D3D_SDK_VERSIONå›ºå®š)
 
-			–ß‚è’lF
-				¬Œ÷G
+			æˆ»ã‚Šå€¤ï¼š
+				æˆåŠŸï¼›
 					IDirect3D9*
-				Ž¸”sF
+				å¤±æ•—ï¼š
 					nullptr
 	*/
 	g_Interface = Direct3DCreate9(D3D_SDK_VERSION);
 
 	if (g_Interface == nullptr)
 	{
-		// ‰Šú‰»Ž¸”s
+		// åˆæœŸåŒ–å¤±æ•—
 		return false;
 	}
 	
-	// Device‚Ìî•ñ‚ðÝ’è‚·‚é‚½‚ß‚Ì\‘¢‘Ì
+	// Deviceã®æƒ…å ±ã‚’è¨­å®šã™ã‚‹ãŸã‚ã®æ§‹é€ ä½“
 	D3DPRESENT_PARAMETERS parameters;
 
-	// Žw’è‚³‚ê‚½ƒf[ƒ^‚ðƒTƒCƒY•ª‚¾‚¯0‚Å‰Šú‰»‚·‚é
+	// æŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’ã‚µã‚¤ã‚ºåˆ†ã ã‘0ã§åˆæœŸåŒ–ã™ã‚‹
 	ZeroMemory(&parameters, sizeof(D3DPRESENT_PARAMETERS));
 
-	// ƒoƒbƒNƒoƒbƒtƒ@‚ÌƒtƒH[ƒ}ƒbƒg
-	// D3DFMT_UNKNOWN => ’m‚è‚Ü‚¹‚ñ
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
+	// D3DFMT_UNKNOWN => çŸ¥ã‚Šã¾ã›ã‚“
 	parameters.BackBufferFormat = D3DFMT_UNKNOWN;
 
-	// ƒEƒBƒ“ƒhƒEŽw’è
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æŒ‡å®š
 	/*
-		true => ƒEƒBƒ“ƒhƒEƒ‚[ƒh
+		true => ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰
 
-		false => ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒ‚[ƒh
-				¦ƒtƒ‹ƒXƒNƒŠ[ƒ“‚Í•Ê“rî•ñ‚ðŽw’è‚·‚é•K—v‚ª‚ ‚é
+		false => ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ¢ãƒ¼ãƒ‰
+				â€»ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã¯åˆ¥é€”æƒ…å ±ã‚’æŒ‡å®šã™ã‚‹å¿…è¦ãŒã‚ã‚‹
 	*/
 	parameters.Windowed = true;
 
 	/*
-		ƒoƒbƒNƒoƒbƒtƒ@‚Æƒtƒƒ“ƒgƒoƒbƒtƒ@‚ÌØ‚è‘Ö‚¦•û–@
-			D3DSWAPEFFECT_DISCARD => Ž©“®Ý’è
+		ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¨ãƒ•ãƒ­ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã®åˆ‡ã‚Šæ›¿ãˆæ–¹æ³•
+			D3DSWAPEFFECT_DISCARD => è‡ªå‹•è¨­å®š
 	*/
 	parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
 	HRESULT result = g_Interface->CreateDevice(
-		// ƒfƒBƒXƒvƒŒƒCƒAƒ_ƒvƒ^‚ÌŽí—Þ
+		// ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã‚¢ãƒ€ãƒ—ã‚¿ã®ç¨®é¡ž
 		D3DADAPTER_DEFAULT,
-		// ƒfƒoƒCƒX‚ÌŽí—Þ
+		// ãƒ‡ãƒã‚¤ã‚¹ã®ç¨®é¡ž
 		D3DDEVTYPE_HAL,
-		// ƒfƒoƒCƒX‚ªŽg—p‚·‚éƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹
+		// ãƒ‡ãƒã‚¤ã‚¹ãŒä½¿ç”¨ã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«
 		window_handle,
-		// ƒfƒoƒCƒX§Œä‚Ì•û–@
+		// ãƒ‡ãƒã‚¤ã‚¹åˆ¶å¾¡ã®æ–¹æ³•
 		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 		// PRESENT_PARAMETERS
 		&parameters,
-		// Device‚Ì•Û‘¶•Ï”Žw’è
+		// Deviceã®ä¿å­˜å¤‰æ•°æŒ‡å®š
 		&g_Device
 	);
 
 	/*
-		FAILED => HRESULT‚ÌŒ‹‰Ê‚ð”»’f‚µ‚Ä‚­‚ê‚éƒ}ƒNƒ
+		FAILED => HRESULTã®çµæžœã‚’åˆ¤æ–­ã—ã¦ãã‚Œã‚‹ãƒžã‚¯ãƒ­
 	*/
 	if (FAILED(result))
 	{
@@ -81,16 +81,146 @@ void ReleaseDirectGraphics()
 {
 	if (g_Device != nullptr)
 	{
-		//Release => ‰ð•úŠÖ”
+		//Release => è§£æ”¾é–¢æ•°
 		g_Device->Release();
-		// ‰ð•úŒã‚Ì•s³ƒAƒNƒZƒX‘Î‰ž
+		// è§£æ”¾å¾Œã®ä¸æ­£ã‚¢ã‚¯ã‚»ã‚¹å¯¾å¿œ
 		g_Device = nullptr;
 	}
 	if (g_Interface != nullptr)
 	{
-		//Release => ‰ð•úŠÖ”
+		//Release => è§£æ”¾é–¢æ•°
 		g_Interface->Release();
-		// ‰ð•úŒã‚Ì•s³ƒAƒNƒZƒX‘Î‰ž
+		// è§£æ”¾å¾Œã®ä¸æ­£ã‚¢ã‚¯ã‚»ã‚¹å¯¾å¿œ
 		g_Interface = nullptr;
 	}
+}
+
+void StartDrawing()
+{
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
+	g_Device->Clear(
+		0,						// 0å›ºå®š
+		nullptr,				// nullptrå›ºå®š
+		D3DCLEAR_TARGET,		// D3DCLEAR_TARGETå›ºå®š
+		D3DCOLOR_XRGB(0, 0, 0),	// å¡—ã‚Šã¤ã¶ã™è‰²
+		1.0f,					// 1.0få›ºå®š
+		0						// 0å›ºå®š
+	);
+
+	// DirectXã§æç”»ã‚’é–‹å§‹ã™ã‚‹
+	g_Device->BeginScene();
+}
+
+void FinishDrawing()
+{
+	// DirectXã®æç”»ã‚’çµ‚äº†ã™ã‚‹
+	g_Device->EndScene();
+
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ•ãƒ­ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã«è»¢é€ã™ã‚‹
+	g_Device->Present(nullptr, nullptr, nullptr, nullptr);
+}
+
+void DrawPorigon()
+{
+	CustomVertex vertices[] =
+	{
+		{ 300.0f, 100.0f, 0.0f, 1.0f, 0xffffff },
+		{ 500.0f, 300.0f, 0.0f, 1.0f, 0xffffff },
+		{  50.0f, 300.0f, 0.0f, 1.0f, 0xffffff }
+	};
+
+	// DirectXã«é ‚ç‚¹æ§‹é€ æƒ…å ±ã‚’é€šçŸ¥
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLELIST,		// ãƒãƒªã‚´ãƒ³ã®ä½œã‚Šæ–¹
+		1,						// ãƒãƒªã‚´ãƒ³ã®æ•°
+		vertices,				// é ‚ç‚¹ãƒªã‚¹ãƒˆ
+		sizeof(CustomVertex)	// 1é ‚ç‚¹ã®ã‚µã‚¤ã‚º
+	);
+}
+
+void DrawPorigonWithTriangleList()
+{
+	CustomVertex vertices[] =
+	{
+		// 1ã¤ç›®
+		{   0.0f,   0.0f, 0.0f, 1.0f, 0xff0000 },
+		{ 100.0f,   0.0f, 0.0f, 1.0f, 0xff0000 },
+		{   0.0f, 100.0f, 0.0f, 1.0f, 0xff0000 },
+
+		// 2ã¤ç›®
+		{ 100.0f,   0.0f, 0.0f, 1.0f, 0x00ff00 },
+		{ 100.0f, 100.0f, 0.0f, 1.0f, 0x00ff00 },
+		{   0.0f, 100.0f, 0.0f, 1.0f, 0x00ff00 }
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLELIST,
+		2,						// æç”»ã™ã‚‹ãƒãƒªã‚´ãƒ³ => 2
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+void DrawPorigonWithTriangleStrip()
+{
+	CustomVertex vertices[] =
+	{
+		{ 300.0f,   0.0f, 0.0f, 1.0f, 0xffffff },
+		{ 350.0f,   0.0f, 0.0f, 1.0f, 0x808080 },
+		{ 300.0f, 200.0f, 0.0f, 1.0f, 0x808080 },
+		{ 350.0f, 200.0f, 0.0f, 1.0f, 0x000000 }
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLESTRIP,	// D3DPT_TRIANGLESTRIPã§ãƒãƒªã‚´ãƒ³ä½œæˆ
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+void DrawPorigonWithTriangleFan()
+{
+	CustomVertex vertices[] =
+	{
+		{ 540.0f, 380.0f, 0.0f, 1.0f, 0x0000ff },
+		{ 640.0f, 380.0f, 0.0f, 1.0f, 0x0000ff },
+		{ 640.0f, 480.0f, 0.0f, 1.0f, 0x0000ff },
+		{ 540.0f, 480.0f, 0.0f, 1.0f, 0x0000ff }
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+void DrawRect(float X, float Y, float Z, float size, float color)
+{
+	CustomVertex vertices[] =
+	{
+		{ X    , Y    , Z, size, color },
+		{ X+100, Y    , Z, size, color },
+		{ X+100, Y+100, Z, size, color },
+		{ X    , Y+100, Z, size, color }
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
 }

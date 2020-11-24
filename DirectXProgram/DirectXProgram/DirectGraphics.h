@@ -1,17 +1,40 @@
-#ifndef DIRECT_GRAPHICS_H
+ï»¿#ifndef DIRECT_GRAPHICS_H
 #define DIRECT_GRAPHICS_H
 
-// DirectGraphics‚Å•K—v‚ÈŠÖ”‚ª’è‹`‚³‚ê‚Ä‚¢‚éƒwƒbƒ_[ƒtƒ@ƒCƒ‹
+// DirectGraphicsã§å¿…è¦ãªé–¢æ•°ãŒå®šç¾©ã•ã‚Œã¦ã„ã‚‹ãƒ˜ãƒƒãƒ€ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«
 #include <d3d9.h>
 #include <d3dx9.h>
 
-/*
-	@brief DirectGraphics‰Šú‰»ŠÖ”
-	@details •`‰æ‚ğg—p‚·‚é‚½‚ß‚Ì‰Šú‰»‚ğs‚¤
-	@retval true
-*/
+struct CustomVertex
+{
+	float X;
+	float Y;
+	float Z;
+	float Rhw;
+	DWORD Color;
+};
 
+/*
+	@brief DirectGraphicsåˆæœŸåŒ–é–¢æ•°
+	@details æç”»ã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚ã®åˆæœŸåŒ–ã‚’è¡Œã†
+	@retval true åˆæœŸåŒ–æˆåŠŸ
+	@retval false åˆæœŸåŒ–å¤±æ•—
+	@param[in] window_handle æç”»ã«ä½¿ç”¨ã™ã‚‹windowãƒãƒ³ãƒ‰ãƒ«
+*/
 bool InitDirectGraphics(HWND window_handle);
 
 void ReleaseDirectGraphics();
+
+void StartDrawing();
+
+void FinishDrawing();
+
+void DrawPorigon();
+
+void DrawPorigonWithTriangleList();
+void DrawPorigonWithTriangleStrip();
+void DrawPorigonWithTriangleFan();
+
+void DrawRect(float X, float Y, float Z, float size, float color);
+
 #endif // DIRECT_GRAPHICS_H

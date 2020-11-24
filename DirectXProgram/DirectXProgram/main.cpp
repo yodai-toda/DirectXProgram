@@ -1,20 +1,20 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include "DirectGraphics.h"
 
-// pragma comment‚É‚æ‚élibƒtƒ@ƒCƒ‹‚Ìİ’è
+// pragma commentã«ã‚ˆã‚‹libãƒ•ã‚¡ã‚¤ãƒ«ã®è¨­å®š
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 
 /*
-	ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
-		–ß‚è’lFLRESULT @@ÀsŒ‹‰Ê
-		ˆø”@FHWND@@@@ƒƒbƒZ[ƒW‚Ì‘ÎÛ‚Æ‚È‚Á‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹
-					HWND		ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹‚ğ•Û‘¶‚·‚éŒ^
-				UINT@@@@ƒƒbƒZ[ƒWî•ñAƒNƒŠƒbƒN‚³‚ê‚½“™‚Ìî•ñ‚ª•Û‘¶‚³‚ê‚Ä‚¢‚é
-				WPARAM@@@ƒƒbƒZ[ƒW•t‰Áî•ñ‚»‚Ì‚P
-				LPARAM@@@ƒƒbƒZ[ƒW•t‰Áî•ñ‚»‚Ì‚Q
-				•t‰Áî•ñ‚É‚ÍƒƒbƒZ[ƒWî•ñ‚Ì•â‘«î•ñ‚ª•Û‘¶‚³‚ê‚Ä‚¢‚é
-					—áFƒL[‚ÌÚ×î•ñ(‘å•¶šA¬•¶š‚È‚Ç)
+	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+		æˆ»ã‚Šå€¤ï¼šLRESULT ã€€ã€€å®Ÿè¡Œçµæœ
+		å¼•æ•°ã€€ï¼šHWNDã€€ã€€ã€€ã€€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å¯¾è±¡ã¨ãªã£ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«
+					HWND		ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã‚’ä¿å­˜ã™ã‚‹å‹
+				UINTã€€ã€€ã€€ã€€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æƒ…å ±ã€ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸç­‰ã®æƒ…å ±ãŒä¿å­˜ã•ã‚Œã¦ã„ã‚‹
+				WPARAMã€€ã€€ã€€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ä»˜åŠ æƒ…å ±ãã®ï¼‘
+				LPARAMã€€ã€€ã€€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ä»˜åŠ æƒ…å ±ãã®ï¼’
+				ä»˜åŠ æƒ…å ±ã«ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æƒ…å ±ã®è£œè¶³æƒ…å ±ãŒä¿å­˜ã•ã‚Œã¦ã„ã‚‹
+					ä¾‹ï¼šã‚­ãƒ¼ã®è©³ç´°æƒ…å ±(å¤§æ–‡å­—ã€å°æ–‡å­—ãªã©)
 */
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam)
 {
@@ -24,8 +24,8 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wpa
 		PostQuitMessage(0);
 		break;
 	default:
-		// ƒƒbƒZ[ƒW‚ğ‰½‚à‘Î‰‚µ‚È‚¢‚Æ‚«‚ÉÀs‚·‚éŠÖ”
-		// ˆø”‚É‚ÍƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚Å“n‚³‚ê‚Ä‚¢‚éˆø”‚»‚Ì‚Ü‚Ü“n‚·
+		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä½•ã‚‚å¯¾å¿œã—ãªã„ã¨ãã«å®Ÿè¡Œã™ã‚‹é–¢æ•°
+		// å¼•æ•°ã«ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã§æ¸¡ã•ã‚Œã¦ã„ã‚‹å¼•æ•°ãã®ã¾ã¾æ¸¡ã™
 		return DefWindowProc(window_handle, message_id, wparam, lparam);
 	}
 	return 0;
@@ -33,12 +33,12 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wpa
 
 /*
 	WinMain
-		WindowsƒAƒvƒŠ‚É‚¨‚¢‚Ä‚ÌƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg
-		–ß‚è’lFƒAƒvƒŠŒ‹‰Ê0‚ğ•Ô‚µ‚Æ‚­‚ÆOK
-		ˆø”@FHINSTANCE hInstace		ƒAƒvƒŠ‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹	H => Handle‚Ì—ª
-			@@HINSTANCE hPrevInstance		ŒÃ‚¢d—l‚Ìc‚è‚È‚Ì‚Åg‚í‚È‚¢	î•ñ‚Æ‚µ‚Ä‚ÌŸ‚¿‚Í‚È‚¢
-				LPSTR lpCmpLine		ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚Ìƒpƒ‰ƒ[ƒ^‚ÌƒŠƒXƒg
-				INT nCmdShow		ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚Ìˆø”‚Ì”
+		Windowsã‚¢ãƒ—ãƒªã«ãŠã„ã¦ã®ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆ
+		æˆ»ã‚Šå€¤ï¼šã‚¢ãƒ—ãƒªçµæœ0ã‚’è¿”ã—ã¨ãã¨OK
+		å¼•æ•°ã€€ï¼šHINSTANCE hInstace		ã‚¢ãƒ—ãƒªã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«	H => Handleã®ç•¥
+			ã€€ã€€HINSTANCE hPrevInstance		å¤ã„ä»•æ§˜ã®æ®‹ã‚Šãªã®ã§ä½¿ã‚ãªã„	æƒ…å ±ã¨ã—ã¦ã®å‹ã¡ã¯ãªã„
+				LPSTR lpCmpLine		ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®ãƒªã‚¹ãƒˆ
+				INT nCmdShow		ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®å¼•æ•°ã®æ•°
 */
 int APIENTRY WinMain(
 	HINSTANCE hInstance,
@@ -46,31 +46,31 @@ int APIENTRY WinMain(
 	LPSTR	  lpCmpLine,
 	INT		  nCmdShow)
 {
-	// ƒEƒBƒ“ƒhƒE‚Ì¶¬(ƒƒCƒ“ƒ‹[ƒv‘O)
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆ(ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—å‰)
 	WNDCLASS window_class =
 	{
-		CS_HREDRAW | CS_VREDRAW,			// ƒNƒ‰ƒX‚ÌƒXƒ^ƒCƒ‹(CS_HREDRAW ‚Æ CS_VREDRAW‚Í‰¡‚Æc‚Ì•ÏX‹–‰Âİ’è)
-		WindowProcedure,					// œƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
-		0,									// •â•ƒƒ‚ƒŠ(0ŒÅ’è‚Å–â‘è‚È‚¢)
-		0,									// •â•ƒƒ‚ƒŠ(0ŒÅ’è‚Å–â‘è‚È‚¢)
-		hInstance,							// œ‚±‚ÌƒvƒƒOƒ‰ƒ€‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-		LoadIcon(nullptr, IDI_APPLICATION),	// ƒAƒCƒRƒ“‰æ‘œ
-		LoadCursor(nullptr, IDC_ARROW),		// ƒJ[ƒ\ƒ‹‰æ‘œ
-		nullptr,							// ”wŒiƒuƒ‰ƒV
-		nullptr,							// ƒƒjƒ…[–¼
-		// TEXT() char* => wchar_t* ‚É•ÏŠ·‚µ‚Ä‚­‚ê‚é
-		TEXT("WindowClass"),				// œƒNƒ‰ƒX–¼
+		CS_HREDRAW | CS_VREDRAW,			// ã‚¯ãƒ©ã‚¹ã®ã‚¹ã‚¿ã‚¤ãƒ«(CS_HREDRAW ã¨ CS_VREDRAWã¯æ¨ªã¨ç¸¦ã®å¤‰æ›´è¨±å¯è¨­å®š)
+		WindowProcedure,					// â—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+		0,									// è£œåŠ©ãƒ¡ãƒ¢ãƒª(0å›ºå®šã§å•é¡Œãªã„)
+		0,									// è£œåŠ©ãƒ¡ãƒ¢ãƒª(0å›ºå®šã§å•é¡Œãªã„)
+		hInstance,							// â—ã“ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+		LoadIcon(nullptr, IDI_APPLICATION),	// ã‚¢ã‚¤ã‚³ãƒ³ç”»åƒ
+		LoadCursor(nullptr, IDC_ARROW),		// ã‚«ãƒ¼ã‚½ãƒ«ç”»åƒ
+		nullptr,							// èƒŒæ™¯ãƒ–ãƒ©ã‚·
+		nullptr,							// ãƒ¡ãƒ‹ãƒ¥ãƒ¼å
+		// TEXT() char* => wchar_t* ã«å¤‰æ›ã—ã¦ãã‚Œã‚‹
+		TEXT("WindowClass"),				// â—ã‚¯ãƒ©ã‚¹å
 	};
 
-	// ‰Šú‰»‚µ‚½ƒEƒBƒ“ƒhƒEî•ñ‚ğ“o˜^‚·‚é
+	// åˆæœŸåŒ–ã—ãŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹
 	/*
 		RegisterClass
-			ƒEƒBƒ“ƒhƒEî•ñ‚ğ“o˜^‚·‚éŠÖ”
-		–ß‚è’l	”ñ0 => “o˜^¬Œ÷A	0 => “o˜^¸”s
+			ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹é–¢æ•°
+		æˆ»ã‚Šå€¤	é0 => ç™»éŒ²æˆåŠŸã€	0 => ç™»éŒ²å¤±æ•—
 	*/
 	if (RegisterClass(&window_class) == 0)
 	{
-		// ¸”s
+		// å¤±æ•—
 		return 0;
 	}
 
@@ -78,39 +78,39 @@ int APIENTRY WinMain(
 	int height = 480;
 
 
-	// ƒEƒBƒ“ƒhƒEì¬
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 	HWND window_handle = CreateWindow(
-		// œ“o˜^‚µ‚Ä‚¢‚éƒEƒBƒ“ƒhƒEƒNƒ‰ƒX\‘¢‘Ì‚Ì–¼‘O
+		// â—ç™»éŒ²ã—ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹æ§‹é€ ä½“ã®åå‰
 		TEXT("WindowClass"),
-		// œƒEƒBƒ“ƒhƒE–¼(ƒ^ƒCƒgƒ‹ƒo[‚É•\¦‚³‚ê‚é•¶š—ñ)
-		TEXT("ƒEƒBƒ“ƒhƒE¶¬ƒTƒ“ƒvƒ‹"),
-		// ƒEƒBƒ“ƒhƒEƒXƒ^ƒCƒ‹
+		// â—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å(ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã«è¡¨ç¤ºã•ã‚Œã‚‹æ–‡å­—åˆ—)
+		TEXT("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆã‚µãƒ³ãƒ—ãƒ«"),
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¹ã‚¿ã‚¤ãƒ«
 		(WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME),
-		// œ•\¦ˆÊ’u
+		// â—è¡¨ç¤ºä½ç½®
 		/*
-			ƒEƒBƒ“ƒhƒE‚ğ•\¦‚·‚éˆÊ’u‚ğw’è‚·‚é
-			(CW_USEDEFAULT => OS”C‚¹)
+			ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹ä½ç½®ã‚’æŒ‡å®šã™ã‚‹
+			(CW_USEDEFAULT => OSä»»ã›)
 		*/
-		CW_USEDEFAULT,	// x²
-		CW_USEDEFAULT,	// y²
-		// œƒTƒCƒY => ƒEƒBƒ“ƒhƒE‚ÌƒTƒCƒY
+		CW_USEDEFAULT,	// xè»¸
+		CW_USEDEFAULT,	// yè»¸
+		// â—ã‚µã‚¤ã‚º => ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚µã‚¤ã‚º
 		width,
 		height,
-		// eƒnƒ“ƒhƒ‹
+		// è¦ªãƒãƒ³ãƒ‰ãƒ«
 		NULL,
-		// ƒƒjƒ…[ƒnƒ“ƒhƒ‹
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ³ãƒ‰ãƒ«
 		NULL,
-		// œƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-		// WinMain‚Ì‘æˆêˆø”‚ğg—p
+		// â—ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+		// WinMainã®ç¬¬ä¸€å¼•æ•°ã‚’ä½¿ç”¨
 		hInstance,
-		// WM_CREATEƒƒbƒZ[ƒW‚Ålpparam‚É“n‚µ‚½‚¢’l
+		// WM_CREATEãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã§lpparamã«æ¸¡ã—ãŸã„å€¤
 		NULL);
 
 	RECT window_rect;
 
 	if (GetWindowRect(window_handle, &window_rect) == false)
 	{
-		// ¸”s
+		// å¤±æ•—
 		return 0;
 	}
 
@@ -118,34 +118,34 @@ int APIENTRY WinMain(
 
 	if (GetClientRect(window_handle, &client_rect) == false)
 	{
-		// ¸”s
+		// å¤±æ•—
 		return 0;
 	}
 
-	// ƒtƒŒ[ƒ€ƒTƒCƒY‚ÌZo
+	// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚µã‚¤ã‚ºã®ç®—å‡º
 	int frame_size_x = (window_rect.right - window_rect.left) - (client_rect.right - client_rect.left);
 	int frame_size_y = (window_rect.bottom - window_rect.top) - (client_rect.bottom - client_rect.top);
 
-	// ƒŠƒTƒCƒY—p‚ÌƒTƒCƒY‚ÌZo
+	// ãƒªã‚µã‚¤ã‚ºç”¨ã®ã‚µã‚¤ã‚ºã®ç®—å‡º
 	int resize_width = frame_size_x + width;
 	int resize_height = frame_size_y + height;
 
-	// ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ÌXV
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã®æ›´æ–°
 	SetWindowPos(
 		window_handle,
 		nullptr,
-		// •\¦À•W
+		// è¡¨ç¤ºåº§æ¨™
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		// œƒŠƒTƒCƒY‚Ì‰¡•
+		// â—ãƒªã‚µã‚¤ã‚ºã®æ¨ªå¹…
 		resize_width,
-		// œƒŠƒTƒCƒY‚Ìc•
+		// â—ãƒªã‚µã‚¤ã‚ºã®ç¸¦å¹…
 		resize_height,
-		// ƒIƒvƒVƒ‡ƒ“‚Ìİ’è
+		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®è¨­å®š
 		SWP_NOMOVE
 	);
 
-	// ƒEƒBƒ“ƒhƒE•\¦
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤º
 	ShowWindow(window_handle, SW_SHOW);
 
 	if (InitDirectGraphics(window_handle) == false)
@@ -153,34 +153,34 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	while (true)
 	{
-		// ƒtƒŒ[ƒ€ŠÇ—
+		// ãƒ•ãƒ¬ãƒ¼ãƒ ç®¡ç†
 		/*
-			ƒtƒŒ[ƒ€ŠÇ—‚Íƒ‹[ƒv‚ªˆê’èüŠú‚É‚È‚é‚æ‚¤‚ÉŠÇ—‚·‚é
-			—á‚¦‚Î60FPS‚ÅƒQ[ƒ€‚ªis‚·‚é‚È‚çA1‰ñ‚Ìƒ‹[ƒv‚Í–ñ0.016•b‚ÅÀs‚·‚é
-			¦DirectX‚ª60FPS‚ÅƒtƒŒ[ƒ€ŠÇ—‚ğ©“®‚Ås‚¤‚Ì‚Å¡‰ñ‚ÍDirectX‚ÉŠÇ—‚Í”C‚¹‚é
+			ãƒ•ãƒ¬ãƒ¼ãƒ ç®¡ç†ã¯ãƒ«ãƒ¼ãƒ—ãŒä¸€å®šå‘¨æœŸã«ãªã‚‹ã‚ˆã†ã«ç®¡ç†ã™ã‚‹
+			ä¾‹ãˆã°60FPSã§ã‚²ãƒ¼ãƒ ãŒé€²è¡Œã™ã‚‹ãªã‚‰ã€1å›ã®ãƒ«ãƒ¼ãƒ—ã¯ç´„0.016ç§’ã§å®Ÿè¡Œã™ã‚‹
+			â€»DirectXãŒ60FPSã§ãƒ•ãƒ¬ãƒ¼ãƒ ç®¡ç†ã‚’è‡ªå‹•ã§è¡Œã†ã®ã§ä»Šå›ã¯DirectXã«ç®¡ç†ã¯ä»»ã›ã‚‹
 		*/
-		// ƒƒbƒZ[ƒW‘Î‰
+		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å¯¾å¿œ
 		/*
-			Windows(OS)‚©‚ç‘—‚ç‚ê‚Ä‚­‚éƒƒbƒZ[ƒW‚Ì‘Î‰‚ğs‚¤•K—v‚ª‚ ‚é
-			ƒƒbƒZ[ƒW‚Ì—á
-			ƒEƒBƒ“ƒhƒE‚ğƒNƒŠƒbƒN‚µ‚½AƒEƒBƒ“ƒhƒE‚Ì~ƒ{ƒ^ƒ“‚ğƒNƒŠƒbƒN‚µ‚½
+			Windows(OS)ã‹ã‚‰é€ã‚‰ã‚Œã¦ãã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å¯¾å¿œã‚’è¡Œã†å¿…è¦ãŒã‚ã‚‹
+			ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ä¾‹
+			ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ãŸã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®Ã—ãƒœã‚¿ãƒ³ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ãŸ
 		*/
 		MSG message;
 
 		/*
 			GetMwssage
-				Windows‚©‚çƒƒbƒZ[ƒW‚ª’Ê’m‚³‚ê‚é‚Ü‚ÅŸ‚Ìˆ—‚Ü‚ÅˆÚs‚µ‚È‚¢
+				Windowsã‹ã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€šçŸ¥ã•ã‚Œã‚‹ã¾ã§æ¬¡ã®å‡¦ç†ã¾ã§ç§»è¡Œã—ãªã„
 				if(GetMessage(&message, nullptr, 0, 100)){}
 		*/
 		/*
 			PeekMessage
-				ƒƒbƒZ[ƒW‚Ì—L–³‚É‚©‚©‚í‚ç‚¸Ÿ‚Ìˆ—‚ğÀs‚·‚é
-				–ß‚è’lFtrue => ƒƒbƒZ[ƒW—L‚è	false => ƒƒbƒZ[ƒW–³‚µ
-				‘æˆêˆø”FóM‚µ‚½ƒƒbƒZ[ƒWî•ñ
-				‘æ“ñ`‘æŒÜˆø”FŒÅ’è’l‚Å–â‘è‚È‚¢
+				ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®æœ‰ç„¡ã«ã‹ã‹ã‚ã‚‰ãšæ¬¡ã®å‡¦ç†ã‚’å®Ÿè¡Œã™ã‚‹
+				æˆ»ã‚Šå€¤ï¼štrue => ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æœ‰ã‚Š	false => ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç„¡ã—
+				ç¬¬ä¸€å¼•æ•°ï¼šå—ä¿¡ã—ãŸãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æƒ…å ±
+				ç¬¬äºŒï½ç¬¬äº”å¼•æ•°ï¼šå›ºå®šå€¤ã§å•é¡Œãªã„
 		*/
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
 		{
@@ -190,20 +190,34 @@ int APIENTRY WinMain(
 			}
 			else
 			{
-				// óM‚µ‚½ƒf[ƒ^‚ğ–|–ó‚·‚é
+				// å—ä¿¡ã—ãŸãƒ‡ãƒ¼ã‚¿ã‚’ç¿»è¨³ã™ã‚‹
 				TranslateMessage(&message);
-				// ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚Ì‘—M‚·‚é
+				// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã®é€ä¿¡ã™ã‚‹
 				DispatchMessage(&message);
-			}			
+			}
 		}
 		else
 		{
-			// ƒQ[ƒ€‚ÉŠÖ˜A‚·‚éˆ—
-			// ƒQ[ƒ€ˆ—‚Æ•`‰æˆ—‚ğÀ‘•‚·‚é
+			// ã‚²ãƒ¼ãƒ ã«é–¢é€£ã™ã‚‹å‡¦ç†
+			// ã‚²ãƒ¼ãƒ å‡¦ç†ã¨æç”»å‡¦ç†ã‚’å®Ÿè£…ã™ã‚‹
+
+			StartDrawing();
+
+			DrawPorigon();
+
+			DrawPorigonWithTriangleList();
+
+			DrawPorigonWithTriangleStrip();
+
+			DrawPorigonWithTriangleFan();
+
+			DrawRect(540.0f, 0.0f, 0.0f, 1.0f, 0x00ffff);
+
+			FinishDrawing();
 		}
 	}
 
-	// ‰ğ•ú
+	// è§£æ”¾
 	ReleaseDirectGraphics();
 
 	return 0;
