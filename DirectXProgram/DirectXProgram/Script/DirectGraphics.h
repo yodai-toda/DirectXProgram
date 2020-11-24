@@ -12,6 +12,17 @@ struct CustomVertex
 	float Z;
 	float Rhw;
 	DWORD Color;
+
+	float Tu;
+	float Tv;
+};
+
+// テクスチャの種類分のenumを作成
+enum TextureID
+{
+	TexIDRailgun,	// Res/Railgun.png
+	TexIDKanzaki,	// Res/Kanzaki.png
+	TexIDMax,
 };
 
 /*
@@ -36,5 +47,12 @@ void DrawPorigonWithTriangleStrip();
 void DrawPorigonWithTriangleFan();
 
 void DrawRect(float X, float Y, float Z, float size, float color);
+
+void DrawPorigonWithTriangleFan(TextureID tex_id);
+
+void DrawTexture(float X, float Y, float Z, TextureID tex_id);
+
+bool LoadTexture(TextureID tex_id);
+void ReleaseTexture();
 
 #endif // DIRECT_GRAPHICS_H

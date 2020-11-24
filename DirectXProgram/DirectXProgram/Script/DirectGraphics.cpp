@@ -2,7 +2,17 @@
 
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
-
+// テクスチャデータ
+LPDIRECT3DTEXTURE9 g_Textures[TextureID::TexIDMax];
+/*
+	TexIDRailgun,	// Res/Railgun.png
+	TexIDKanzaki,	// Res/Kanzaki.png
+*/
+LPCWSTR g_TextureNameList[] =
+{
+	TEXT("Res/Railgun.png"),	// TexIDRailgun
+	TEXT("Res/Kanzaki.png"),	// TexIDKanzaki
+};
 
 bool InitDirectGraphics(HWND window_handle)
 {
@@ -189,10 +199,10 @@ void DrawPorigonWithTriangleFan()
 {
 	CustomVertex vertices[] =
 	{
-		{ 540.0f, 380.0f, 0.0f, 1.0f, 0x0000ff },
-		{ 640.0f, 380.0f, 0.0f, 1.0f, 0x0000ff },
-		{ 640.0f, 480.0f, 0.0f, 1.0f, 0x0000ff },
-		{ 540.0f, 480.0f, 0.0f, 1.0f, 0x0000ff }
+		{ 540.0f, 380.0f, 0.0f, 1.0f, 0xffffff },
+		{ 640.0f, 380.0f, 0.0f, 1.0f, 0xffffff },
+		{ 640.0f, 480.0f, 0.0f, 1.0f, 0xffffff },
+		{ 540.0f, 480.0f, 0.0f, 1.0f, 0xffffff }
 	};
 
 	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
@@ -223,4 +233,88 @@ void DrawRect(float X, float Y, float Z, float size, float color)
 		vertices,
 		sizeof(CustomVertex)
 	);
+}
+
+void DrawPorigonWithTriangleFan(TextureID tex_id)
+{
+	if (g_Textures[tex_id] == nullptr)
+	{
+		return;
+	}
+
+	CustomVertex vertices[] =
+	{
+		{   0.0f,   0.0f, 0.0f, 1.0f, 0xffffffff, 0.0f, 0.0f },
+		{ 200.0f,   0.0f, 0.0f, 1.0f, 0xffffffff, 1.0f, 0.0f },
+		{ 200.0f, 480.0f, 0.0f, 1.0f, 0xffffffff, 1.0f, 1.0f },
+		{   0.0f, 480.0f, 0.0f, 1.0f, 0xffffffff, 0.0f, 1.0f }
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+	// DirectX(Computer)に今回のポリゴン描画で使用するテクスチャを教える
+	g_Device->SetTexture(0, g_Textures[tex_id]);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+void DrawTexture(float X, float Y, float Z, TextureID tex_id)
+{
+	if (g_Textures[tex_id] == nullptr)
+	{
+		return;
+	}
+
+	CustomVertex vertices[] =
+	{
+		{ X    , Y    , Z, 1.0f, 0xffffff, 0.0f, 0.0f},
+		{ X+288, Y    , Z, 1.0f, 0xffffff, 1.0f, 0.0f},
+		{ X+288, Y+480, Z, 1.0f, 0xffffff, 1.0f, 1.0f},
+		{ X    , Y+480, Z, 1.0f, 0xffffff, 0.0f, 1.0f}
+	};
+	
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+	g_Device->SetTexture(0, g_Textures[tex_id]);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+bool LoadTexture(TextureID tex_id)
+{
+	HRESULT hr = D3DXCreateTextureFromFile(
+		g_Device,					// DirectX9のデバイス
+		g_TextureNameList[tex_id],	// ファイル名
+		&g_Textures[tex_id]			// 読み込まれたテクスチャじょうほうが保存される変数
+	);
+
+	// FAILED => HRESULT型の変数を指定して、その値が失敗していたらtrue
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ReleaseTexture()
+{
+	for (int i = 0; i < TextureID::TexIDMax; i++)
+	{
+		if (g_Textures[i] != nullptr)
+		{
+			g_Textures[i]->Release();
+			g_Textures[i] = nullptr;
+		}
+	}
 }

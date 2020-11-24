@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectGraphics.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Script\DirectGraphics.cpp" />
+    <ClCompile Include="Script\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectGraphics.h" />
+    <ClInclude Include="Script\DirectGraphics.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

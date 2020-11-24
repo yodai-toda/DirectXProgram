@@ -153,6 +153,16 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
+	if (LoadTexture(TextureID::TexIDRailgun) == false)
+	{
+		return 0;
+	}
+
+	if (LoadTexture(TextureID::TexIDKanzaki) == false)
+	{
+		return 0;
+	}
+
 	// メインループ
 	while (true)
 	{
@@ -203,21 +213,26 @@ int APIENTRY WinMain(
 
 			StartDrawing();
 
-			DrawPorigon();
+			//DrawPorigon();
 
-			DrawPorigonWithTriangleList();
+			//DrawPorigonWithTriangleList();
 
-			DrawPorigonWithTriangleStrip();
+			//DrawPorigonWithTriangleStrip();
 
-			DrawPorigonWithTriangleFan();
+			//DrawPorigonWithTriangleFan();
 
-			DrawRect(540.0f, 0.0f, 0.0f, 1.0f, 0x00ffff);
+			DrawPorigonWithTriangleFan(TextureID::TexIDRailgun);
+
+			//DrawRect(540.0f, 0.0f, 0.0f, 1.0f, 0x00ffff);
+
+			DrawTexture(352.0f, 0.0f, 0.0f, TextureID::TexIDKanzaki);
 
 			FinishDrawing();
 		}
 	}
 
 	// 解放
+	ReleaseTexture();
 	ReleaseDirectGraphics();
 
 	return 0;
