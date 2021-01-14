@@ -122,10 +122,14 @@ void SetUpView();
 void SetUpProjection();
 // 3Dポリゴン描画
 void Draw3DPorigon();
+void DrawXFile();
 
 void Draw3DPorigon(float X, float Y, float Z, DWORD color);
 
 bool LoadTexture(TextureID tex_id);
+bool LoadXFile( LPCWSTR file_name );
+
+void ReleaseXFile();
 void ReleaseTexture();
 
 #endif // DIRECT_GRAPHICS_H

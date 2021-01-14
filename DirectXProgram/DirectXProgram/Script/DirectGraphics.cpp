@@ -1,5 +1,19 @@
 ﻿#include "DirectGraphics.h"
 
+// XFileデータ保存用の構造体
+/*
+	なぜ、ヘッダファイルではなく、ソースファイルに構造体を宣言したか？
+	XFile構造体を使用するファイルがDirectGraphics.cppだけだから
+*/
+struct XFile
+{
+	DWORD MaterialNum;				//!< メッシュ数
+	LPD3DXMESH Meshes;				//!< メッシュ
+	LPD3DXBUFFER Materials;			//!< メッシュマテリアル
+	LPDIRECT3DTEXTURE9* Textures;	//!< テクスチャデータ
+};
+XFile g_XFile;
+
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
 // テクスチャデータ
@@ -445,6 +459,91 @@ bool LoadTexture(TextureID tex_id)
 	}
 
 	return true;
+}
+
+bool LoadXFile(LPCWSTR file_name)
+{
+	HRESULT hr = D3DXLoadMeshFromX(
+		file_name,				// ●ファイル名
+		D3DXMESH_SYSTEMMEM,		// メッシュ作成のオプション(D3DXMESH_SYSTEMMEM固定)
+		g_Device,				// DirectGraphicsのデバイス
+		nullptr,				// 現状はnullptrで良し
+		&g_XFile.Materials,		// ●マテリアル保存用
+		nullptr,				// 現状はnullptrで良し
+		&g_XFile.MaterialNum,	// ●マテリアルの数保存用
+		&g_XFile.Meshes			// ●メッシュデータ保存用
+	);
+
+	if(FAILED( hr ))
+	{
+		return false;
+	}
+
+	// マテリアルの数だけテクスチャを保存できるようにする
+	g_XFile.Textures = new LPDIRECT3DTEXTURE9[g_XFile.MaterialNum];
+
+	// バッファの先頭ポインタをD3DXMATERIALにキャストして取得
+	/*
+		Materialsの型を確認するとわかるが、MaterialsはLPD3DCBUFFER型になっている
+		Bufferという汎用的にデータを保存する型にマテリアルが保存されているため、
+		Material本来の型に戻す必要がある
+
+		GetBufferPointerを使用すればBufferの先頭のポインタが取得できる
+	*/
+	D3DXMATERIAL* materials = (D3DXMATERIAL*)g_XFile.Materials->GetBufferPointer();
+
+	for(int i = 0; i < g_XFile.MaterialNum; i++)
+	{
+		// pTextureFilenameがnullptrじゃなかったらテクスチャが使用されている
+		if(materials[i].pTextureFilename != nullptr)
+		{
+			LPSTR text = materials[i].pTextureFilename;
+			wchar_t wtext[256];
+			mbstowcs(wtext, text, strlen(text) + 1 );
+			LPWSTR file_name = wtext;
+
+			D3DXCreateTextureFromFile(
+				g_Device,
+				file_name,
+				& g_XFile.Textures[i]);
+		}
+		else
+		{
+			g_XFile.Textures[i] = nullptr;
+		}
+	}
+
+	return true;
+}
+
+void ReleaseXFile()
+{
+	// テクスチャの解放
+	for(int i = 0; i < g_XFile.MaterialNum; i++)
+	{
+		if(g_XFile.Textures[i] != nullptr)
+		{
+			g_XFile.Textures[i]->Release();
+			g_XFile.Textures[i] = nullptr;
+		}
+	}
+
+	// テクスチャ配列も解放する
+	delete[] g_XFile.Textures;
+
+	// マテリアルの解放
+	if(g_XFile.Materials != nullptr)
+	{
+		g_XFile.Materials->Release();
+		g_XFile.Materials = nullptr;
+	}
+
+	// メッシュの解放
+	if(g_XFile.Meshes != nullptr)
+	{
+		g_XFile.Meshes->Release();
+		g_XFile.Meshes = nullptr;
+	}
 }
 
 void ReleaseTexture()
