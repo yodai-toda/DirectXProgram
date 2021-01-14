@@ -221,8 +221,12 @@ int APIENTRY WinMain(
 			// ゲームに関連する処理
 			// ゲーム処理と描画処理を実装する
 
+			// カメラの設定
+			SetUpView();
+
 			StartDrawing();
 
+			// 2Dオブジェクトの描画
 			//DrawPorigon();
 
 			//DrawPorigonWithTriangleList();
@@ -231,11 +235,16 @@ int APIENTRY WinMain(
 
 			//DrawPorigonWithTriangleFan();
 
-			DrawPorigonWithTriangleFan(TextureID::TexIDRailgun);
-
 			//DrawRect(540.0f, 0.0f, 0.0f, 1.0f, 0x00ffff);
 
-			DrawTexture(352.0f, 0.0f, 0.0f, TextureID::TexIDKanzaki);
+			//DrawPorigonWithTriangleFan( TextureID::TexIDRailgun );
+
+			//DrawTexture(352.0f, 0.0f, 0.0f, TextureID::TexIDKanzaki);
+
+			// 3Dオブジェクトの描画
+			Draw3DPorigon();
+
+			Draw3DPorigon(3.0f, 0.0f, 0.0f, 0xff0000ff);
 
 			FinishDrawing();
 		}

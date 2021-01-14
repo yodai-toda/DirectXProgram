@@ -84,6 +84,13 @@ bool InitDirectGraphics(HWND window_handle)
 	{
 		return false;
 	}
+
+	// プロジェクションの設定
+	/*
+		プロジェクションの設定をゲーム中に変更しない場合1度だけ設定をすればOK
+	*/
+	SetUpProjection();
+
 	return true;
 }
 
@@ -194,7 +201,7 @@ void DrawPorigon()
 	};
 
 	// DirectXに頂点構造情報を通知
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+	g_Device->SetFVF(FVF_2D_VERTEX);
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLELIST,		// ポリゴンの作り方
@@ -219,7 +226,7 @@ void DrawPorigonWithTriangleList()
 		{   0.0f, 100.0f, 0.0f, 1.0f, 0x00ff00 }
 	};
 
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+	g_Device->SetFVF(FVF_2D_VERTEX);
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLELIST,
@@ -239,7 +246,7 @@ void DrawPorigonWithTriangleStrip()
 		{ 350.0f, 200.0f, 0.0f, 1.0f, 0x000000 }
 	};
 
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+	g_Device->SetFVF(FVF_2D_VERTEX);
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP,	// D3DPT_TRIANGLESTRIPでポリゴン作成
@@ -259,7 +266,7 @@ void DrawPorigonWithTriangleFan()
 		{ 540.0f, 480.0f, 0.0f, 1.0f, 0xffffff }
 	};
 
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+	g_Device->SetFVF(FVF_2D_VERTEX);
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN,
@@ -269,7 +276,7 @@ void DrawPorigonWithTriangleFan()
 	);
 }
 
-void DrawRect(float X, float Y, float Z, float size, float color)
+void DrawRect(float X, float Y, float Z, float size, DWORD color)
 {
 	CustomVertex vertices[] =
 	{
@@ -279,7 +286,7 @@ void DrawRect(float X, float Y, float Z, float size, float color)
 		{ X    , Y+100, Z, size, color }
 	};
 
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+	g_Device->SetFVF(FVF_2D_VERTEX);
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN,
@@ -304,7 +311,7 @@ void DrawPorigonWithTriangleFan(TextureID tex_id)
 		{   0.0f, 480.0f, 0.0f, 1.0f, 0xffffffff, 0.0f, 1.0f }
 	};
 
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	g_Device->SetFVF(FVF_2D_VERTEX_TEXTURE);
 
 	// DirectX(Computer)に今回のポリゴン描画で使用するテクスチャを教える
 	g_Device->SetTexture(0, g_Textures[tex_id]);
@@ -332,7 +339,7 @@ void DrawTexture(float X, float Y, float Z, TextureID tex_id)
 		{ X    , Y+480, Z, 1.0f, 0xffffff00, 0.0f, 1.0f}
 	};
 	
-	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	g_Device->SetFVF(FVF_2D_VERTEX_TEXTURE);
 
 	g_Device->SetTexture(0, g_Textures[tex_id]);
 
@@ -342,6 +349,85 @@ void DrawTexture(float X, float Y, float Z, TextureID tex_id)
 		vertices,
 		sizeof(CustomVertexTex)
 	);
+}
+
+// View座標変換の設定
+void SetUpView()
+{
+	D3DXMATRIX matrix;	// カメラ情報を保存するための行列
+	D3DXVECTOR3 camera_pos = D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+	D3DXVECTOR3 eye_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 up_vec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	/*
+		D3DXMatrixLookAtLH
+			カメラ情報をもつ行列を作成する
+	*/
+	// L => Left H => Hand LH => 左手系でカメラ座標を設定する
+	D3DXMatrixLookAtLH(
+		&matrix,		// 結果保存用行列の指定
+		&camera_pos,	// カメラ座標
+		&eye_pos,		// 注視点座標
+		&up_vec			// ワールド座標におけるカメラの上向きのベクトル
+	);
+
+	// SetTransform => 座標変換系の情報をDirectXに通知する
+	g_Device->SetTransform(D3DTS_VIEW, &matrix);
+}
+
+// プロジェクション座標変換の設定
+void SetUpProjection()
+{
+	D3DXMATRIX matrix;	// プロジェクション情報を保存するための行列
+	float aspect = 640.0f / 480.0f;	// アスペクト比(ウィンドウサイズ横 / 縦)
+
+	// Perspective => 透視投影
+	D3DXMatrixPerspectiveFovLH(
+		&matrix,				// 結果保存用の行列の指定
+		// D3DXToRadian => 度数法をラジアンに変換
+		D3DXToRadian(60.0f),	// 画角(ラジアン指定)
+		aspect,					// アスペクト比
+		0.1f,					// 視錐台のNear値
+		100.0f					// 視錐台のFar値
+	);
+
+	// SetTransform => 座標変換系の情報をDirectXに通知する
+	g_Device->SetTransform(D3DTS_PROJECTION, &matrix);
+}
+
+// 3Dポリゴン描画
+void Draw3DPorigon()
+{
+	// ライティングを無効にする
+	g_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	// △ポリゴン描画
+	CustomVertex3D vertices[]
+	{
+		{ -1.0f, -1.0f, 0.0f, 0xffff0000 },
+		{  0.0f,  1.0f, 0.0f, 0xffff0000 },
+		{  1.0f, -1.0f, 0.0f, 0xffff0000 }
+	};
+
+	g_Device->SetFVF(FVF_3D_VERTEX);
+
+	g_Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, vertices, sizeof(CustomVertex3D));
+}
+
+void Draw3DPorigon(float X, float Y, float Z, DWORD color)
+{
+	g_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	CustomVertex3D vertices[]
+	{
+		{ X - 1.0f, Y - 1.0f, Z, color},
+		{ X,        Y + 1.0f, Z, color},
+		{ X + 1.0f, Y - 1.0f, Z, color}
+	};
+
+	g_Device->SetFVF(FVF_3D_VERTEX);
+
+	g_Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, vertices, sizeof(CustomVertex3D));
 }
 
 bool LoadTexture(TextureID tex_id)
