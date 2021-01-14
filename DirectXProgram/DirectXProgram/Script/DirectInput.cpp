@@ -3,7 +3,38 @@
 LPDIRECTINPUT8 g_InputInterface;			// DIRECTINPUT8のポインタ
 LPDIRECTINPUTDEVICE8 g_InputKeyboardDevice;	// Keyboard用Deviceのポインタ
 
-bool g_KeyStates[256];	// キー情報の保存用
+InputState g_KeyStates[256];	// キー情報の保存用
+
+InputState UpdateInputState(bool is_push, InputState state);
+
+InputState UpdateInputState(bool is_push, InputState state)
+{
+	if(is_push == true)
+	{
+		// 前回押されていなかった
+		if(state == InputState::NoHeld)
+		{
+			return InputState::Pushed;
+		}
+		// 前回押された or 前回押されている
+		else if(state == InputState::Pushed ||
+				state == InputState::Held)
+		{
+			return InputState::Held;
+		}
+	}
+	else
+	{
+		// 前回押されている or 前回押された
+		if(state == InputState::Pushed ||
+			state == InputState::Held)
+		{
+			return InputState::Released;
+		}
+	}
+
+	return InputState::NoHeld;
+}
 
 bool InitDirectInput()
 {
@@ -87,9 +118,6 @@ bool InitDirectInput()
 
 void UpdateDirectInput()
 {
-	// キー情報の初期化
-	memset(g_KeyStates, false, sizeof(bool) * 256);
-
 	// キーボード情報格納用
 	BYTE key_states[256];
 	HRESULT hr;
@@ -107,10 +135,15 @@ void UpdateDirectInput()
 	{
 		for(int i = 0; i < 256; i++)
 		{
+			bool is_push = false;
+
 			if(key_states[i] & 0x80)
 			{
-				g_KeyStates[i] = true;
+				is_push = true;
 			}
+
+			// キーの状態を更新する
+			g_KeyStates[i] = UpdateInputState(is_push, g_KeyStates[i]);
 		}
 	}
 }
@@ -119,6 +152,9 @@ void ReleaseDirectInput()
 {
 	if(g_InputKeyboardDevice != nullptr)
 	{
+		// 制御停止 <= Input系のデバイスでは必要
+		g_InputKeyboardDevice->Unacquire();
+
 		//デバイスを解散
 		g_InputKeyboardDevice->Release();
 		g_InputKeyboardDevice = nullptr;
@@ -132,7 +168,7 @@ void ReleaseDirectInput()
 	}
 }
 
-bool IsKeyHeld( int key )
+bool IsKeyHeld(int key)
 {
 	// 要素番号以外が設定されていないかチェック
 	if(key < 0 || key >= 256)
@@ -140,5 +176,32 @@ bool IsKeyHeld( int key )
 		return false;
 	}
 
-	return g_KeyStates[key];
+	return g_KeyStates[key] == InputState::Held ? true : false;
+}
+
+bool IsKeyPushed(int key)
+{
+	// 要素番号以外が設定されていないかチェック
+	if(key < 0 || key >= 256)
+	{
+		return false;
+	}
+
+	if(g_KeyStates[key] == InputState::Pushed)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool IsKeyReleased(int key)
+{
+	// 要素番号以外が設定されていないかチェック
+	if(key < 0 || key >= 256)
+	{
+		return false;
+	}
+
+	return g_KeyStates[key] == InputState::Released ? true : false;
 }

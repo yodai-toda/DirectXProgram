@@ -107,6 +107,60 @@ void ReleaseDirectGraphics()
 
 void StartDrawing()
 {
+	// ブレンドの設定(以下の設定では頂点カラーとテクスチャのαのブレンドを許可している)
+	/*
+		SetTextureStageState
+			第一：ステージのID
+			第二：設定の種類
+			第三：設定の詳細
+	*/
+	/*
+		SetTextureStageState(0,D3DTSS_ALPHAOP, D3DTOP_MODULATE)
+			第一：0
+			第二：D3DTSS_ALPHAOP <= α値の尾久政に関する設定をする
+			第三：D3DTOP_MODULate <= 合成は乗算を使用する
+	*/
+	g_Device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	/*
+		SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE)
+			第一：0
+			第二：D3DTSS_COLORARG1 <= 乗算の値の設定
+			第三：D3DTA_TEXTURE <= テクスチャカラーを使用する
+	*/
+	g_Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	/*
+		SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE)
+			第一:0
+			第二：D3DTSS_COLORARG2 <= 乗算の値の設定
+			第三：D3DTA_DIFFUSE <= Stageの送信されてきた合成カラー
+	*/
+	g_Device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
+	// α値の反映を有効にする
+	/*
+		SetRenderState <= 描画の設定を有効にする
+			第一：変更したい設定の種類
+			第二：設定の詳細
+	*/
+	/*
+		SetRenderState <= 描画の設定を有効にする
+			第一：D3DRS_ALPHABLENDENABLE <= αブレンドの設定を変更する
+			第二：true <= 有効(falseが無効)
+	*/
+	g_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	/*
+		SetRenderState <= 描画の設定を有効にする
+			第一：D3DRS_SRCBLEND <= バッファに送信される色の設定
+			第二：D3DBLEND_SRCALPHA <= アルファをそのまま使う
+	*/
+	g_Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	/*
+		SetRenderState <= 描画の設定を有効にする
+			第一：D3DRS_DESTBLEND <= バッファの色の設定
+			第二：D3DBLEND_INVSRCALPHA <= SRC(バッファに送信される色)のアルファを利用する(1 - srcalpha)
+	*/
+	g_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
 	// バックバッファをクリアする
 	g_Device->Clear(
 		0,						// 0固定
@@ -242,7 +296,7 @@ void DrawPorigonWithTriangleFan(TextureID tex_id)
 		return;
 	}
 
-	CustomVertex vertices[] =
+	CustomVertexTex vertices[] =
 	{
 		{   0.0f,   0.0f, 0.0f, 1.0f, 0xffffffff, 0.0f, 0.0f },
 		{ 200.0f,   0.0f, 0.0f, 1.0f, 0xffffffff, 1.0f, 0.0f },
@@ -259,7 +313,7 @@ void DrawPorigonWithTriangleFan(TextureID tex_id)
 		D3DPT_TRIANGLEFAN,
 		2,
 		vertices,
-		sizeof(CustomVertex)
+		sizeof(CustomVertexTex)
 	);
 }
 
@@ -270,12 +324,12 @@ void DrawTexture(float X, float Y, float Z, TextureID tex_id)
 		return;
 	}
 
-	CustomVertex vertices[] =
+	CustomVertexTex vertices[] =
 	{
-		{ X    , Y    , Z, 1.0f, 0xffffff, 0.0f, 0.0f},
-		{ X+288, Y    , Z, 1.0f, 0xffffff, 1.0f, 0.0f},
-		{ X+288, Y+480, Z, 1.0f, 0xffffff, 1.0f, 1.0f},
-		{ X    , Y+480, Z, 1.0f, 0xffffff, 0.0f, 1.0f}
+		{ X    , Y    , Z, 1.0f, 0xffff0000, 0.0f, 0.0f},
+		{ X+288, Y    , Z, 1.0f, 0xff00ffff, 1.0f, 0.0f},
+		{ X+288, Y+480, Z, 1.0f, 0xff0000ff, 1.0f, 1.0f},
+		{ X    , Y+480, Z, 1.0f, 0xffffff00, 0.0f, 1.0f}
 	};
 	
 	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
@@ -286,7 +340,7 @@ void DrawTexture(float X, float Y, float Z, TextureID tex_id)
 		D3DPT_TRIANGLEFAN,
 		2,
 		vertices,
-		sizeof(CustomVertex)
+		sizeof(CustomVertexTex)
 	);
 }
 

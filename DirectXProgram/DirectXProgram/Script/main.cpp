@@ -217,11 +217,6 @@ int APIENTRY WinMain(
 		else
 		{
 			UpdateDirectInput();
-			if (IsKeyHeld(DIK_A))
-			{
-				int xx = 0;
-				xx = 0;
-			}
 
 			// ゲームに関連する処理
 			// ゲーム処理と描画処理を実装する

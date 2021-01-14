@@ -12,6 +12,15 @@ struct CustomVertex
 	float Z;
 	float Rhw;
 	DWORD Color;
+};
+
+struct CustomVertexTex
+{
+	float X;
+	float Y;
+	float Z;
+	float Rhw;
+	DWORD Color;
 
 	float Tu;
 	float Tv;
