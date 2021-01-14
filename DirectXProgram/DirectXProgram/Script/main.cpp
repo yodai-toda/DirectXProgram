@@ -1,9 +1,12 @@
 ﻿#include <Windows.h>
 #include "DirectGraphics.h"
+#include "DirectInput.h"
 
 // pragma commentによるlibファイルの設定
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
 
 /*
 	ウィンドウプロシージャ
@@ -153,6 +156,11 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
+	if (InitDirectInput() == false)
+	{
+		return 0;
+	}
+
 	if (LoadTexture(TextureID::TexIDRailgun) == false)
 	{
 		return 0;
@@ -208,6 +216,13 @@ int APIENTRY WinMain(
 		}
 		else
 		{
+			UpdateDirectInput();
+			if (IsKeyHeld(DIK_A))
+			{
+				int xx = 0;
+				xx = 0;
+			}
+
 			// ゲームに関連する処理
 			// ゲーム処理と描画処理を実装する
 
@@ -233,6 +248,7 @@ int APIENTRY WinMain(
 
 	// 解放
 	ReleaseTexture();
+	ReleaseDirectInput();
 	ReleaseDirectGraphics();
 
 	return 0;

@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Script\DirectGraphics.cpp" />
+    <ClCompile Include="Script\DirectInput.cpp" />
     <ClCompile Include="Script\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Script\DirectGraphics.h" />
+    <ClInclude Include="Script\DirectInput.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
