@@ -89,6 +89,13 @@ enum TextureID
 	TexIDMax,
 };
 
+enum XFileDate
+{
+	bomb,
+
+	XFileDateMax,
+};
+
 /*
 	@brief DirectGraphics初期化関数
 	@details 描画を使用するための初期化を行う
@@ -123,6 +130,7 @@ void SetUpProjection();
 // 3Dポリゴン描画
 void Draw3DPorigon();
 void DrawXFile();
+void DrawXFile( XFileDate xfiledate_, float pos_x, float pos_y, float pos_z, float rad_x, float rad_y, float rad_z, float scale_x, float scale_y, float scale_z );
 
 void Draw3DPorigon(float X, float Y, float Z, DWORD color);
 

@@ -12,7 +12,7 @@ struct XFile
 	LPD3DXBUFFER Materials;			//!< メッシュマテリアル
 	LPDIRECT3DTEXTURE9* Textures;	//!< テクスチャデータ
 };
-XFile g_XFile;
+XFile g_XFile[XFileDateMax];
 
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
@@ -56,6 +56,9 @@ bool InitDirectGraphics(HWND window_handle)
 
 	// 指定されたデータをサイズ分だけ0で初期化する
 	ZeroMemory(&parameters, sizeof(D3DPRESENT_PARAMETERS));
+
+	// バックバッファの数
+	parameters.BackBufferCount = 1;
 
 	// バックバッファのフォーマット
 	// D3DFMT_UNKNOWN => 知りません
@@ -181,6 +184,9 @@ void StartDrawing()
 			第二：D3DBLEND_INVSRCALPHA <= SRC(バッファに送信される色)のアルファを利用する(1 - srcalpha)
 	*/
 	g_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	// ライティングを無効にする
+	g_Device->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
 	// バックバッファをクリアする
 	g_Device->Clear(
@@ -428,6 +434,115 @@ void Draw3DPorigon()
 	g_Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 1, vertices, sizeof(CustomVertex3D));
 }
 
+void DrawXFile()
+{
+	float pos_x = 1.0f;
+	float pos_y = 5.0f;
+	float pos_z = 0.0f;
+
+	float scale_x = 4.0f;
+	float scale_y = 1.0f;
+	float scale_z = 3.0f;
+
+	float rad_x = D3DXToRadian( 0.0f );
+	float rad_y = D3DXToRadian( 45.0f );
+	float rad_z = D3DXToRadian( 0.0f );
+
+	D3DXMATRIX matrix;
+	D3DXMATRIX scale_matrix;
+	D3DXMATRIX trans_matrix;
+	D3DXMATRIX rotate_x_matrix;
+	D3DXMATRIX rotate_y_matrix;
+	D3DXMATRIX rotate_z_matrix;
+
+	// D3DXMatrixIdentity => 単位行列化する
+	D3DXMatrixIdentity(&matrix);
+
+	// 拡縮
+	D3DXMatrixScaling(&scale_matrix, scale_x, scale_y, scale_z);
+
+	// 回転
+	D3DXMatrixRotationX(&rotate_x_matrix, rad_x);
+	D3DXMatrixRotationY(&rotate_y_matrix, rad_y);
+	D3DXMatrixRotationZ(&rotate_z_matrix, rad_z);
+
+	// 移動
+	D3DXMatrixTranslation(&trans_matrix, pos_x, pos_y, pos_z);
+
+	matrix *= trans_matrix;
+
+	matrix *= scale_matrix;
+
+	matrix *= rotate_x_matrix;
+	matrix *= rotate_y_matrix;
+	matrix *= rotate_z_matrix;
+
+	g_Device->SetTransform(D3DTS_WORLD, &matrix);
+
+	// 描画処理
+	/*
+		XFileの描画はマテリアル単位で行う
+		各マテリアル単位でマテリアルの設定とそのマテリアルで使われているテクスチャの設定を行う
+		その設定が完了したらメッシュを描画する
+	*/
+	D3DXMATERIAL* materials = (D3DXMATERIAL*)g_XFile[bomb].Materials->GetBufferPointer();
+	for(DWORD i = 0; i < g_XFile[bomb].MaterialNum; i++)
+	{
+		// マテリアルの設定
+		g_Device->SetMaterial(&materials[i].MatD3D);
+		// テクスチャの設定
+		g_Device->SetTexture(0, g_XFile[bomb].Textures[i]);
+		// メッシュを描画
+		g_XFile[bomb].Meshes->DrawSubset(i);
+	}
+}
+
+ 
+void DrawXFile( XFileDate xfiledate_, float pos_x, float pos_y, float pos_z, float rad_x, float rad_y, float rad_z, float scale_x, float scale_y, float scale_z)
+{
+	D3DXMATRIX matrix;
+	D3DXMATRIX scale_matrix;
+	D3DXMATRIX trans_matrix;
+	D3DXMATRIX rotate_x_matrix;
+	D3DXMATRIX rotate_y_matrix;
+	D3DXMATRIX rotate_z_matrix;
+
+	// D3DXMatrixIdentity => 単位行列化する
+	D3DXMatrixIdentity(&matrix);
+
+	// 拡縮
+	D3DXMatrixScaling(&scale_matrix, scale_x, scale_y, scale_z);
+
+	// 回転
+	D3DXMatrixRotationX(&rotate_x_matrix, rad_x);
+	D3DXMatrixRotationY(&rotate_y_matrix, rad_y);
+	D3DXMatrixRotationZ(&rotate_z_matrix, rad_z);
+
+	// 移動
+	D3DXMatrixTranslation(&trans_matrix, pos_x, pos_y, pos_z);
+
+	matrix *= trans_matrix;
+
+	matrix *= scale_matrix;
+
+	matrix *= rotate_x_matrix;
+	matrix *= rotate_y_matrix;
+	matrix *= rotate_z_matrix;
+
+	g_Device->SetTransform(D3DTS_WORLD, &matrix);
+
+	D3DXMATERIAL* materials = (D3DXMATERIAL*)g_XFile[xfiledate_].Materials->GetBufferPointer();
+	for(DWORD i = 0; i < g_XFile[xfiledate_].MaterialNum; i++ )
+	{
+		// マテリアルの設定
+		g_Device->SetMaterial(&materials[i].MatD3D);
+		// テクスチャの設定
+		g_Device->SetTexture(0, g_XFile[xfiledate_].Textures[i] );
+		// メッシュを描画
+		g_XFile[xfiledate_].Meshes->DrawSubset(i);
+	}
+}
+
 void Draw3DPorigon(float X, float Y, float Z, DWORD color)
 {
 	g_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -468,10 +583,10 @@ bool LoadXFile(LPCWSTR file_name)
 		D3DXMESH_SYSTEMMEM,		// メッシュ作成のオプション(D3DXMESH_SYSTEMMEM固定)
 		g_Device,				// DirectGraphicsのデバイス
 		nullptr,				// 現状はnullptrで良し
-		&g_XFile.Materials,		// ●マテリアル保存用
+		&g_XFile[bomb].Materials,		// ●マテリアル保存用
 		nullptr,				// 現状はnullptrで良し
-		&g_XFile.MaterialNum,	// ●マテリアルの数保存用
-		&g_XFile.Meshes			// ●メッシュデータ保存用
+		&g_XFile[bomb].MaterialNum,	// ●マテリアルの数保存用
+		&g_XFile[bomb].Meshes			// ●メッシュデータ保存用
 	);
 
 	if(FAILED( hr ))
@@ -480,7 +595,7 @@ bool LoadXFile(LPCWSTR file_name)
 	}
 
 	// マテリアルの数だけテクスチャを保存できるようにする
-	g_XFile.Textures = new LPDIRECT3DTEXTURE9[g_XFile.MaterialNum];
+	g_XFile[bomb].Textures = new LPDIRECT3DTEXTURE9[g_XFile[bomb].MaterialNum];
 
 	// バッファの先頭ポインタをD3DXMATERIALにキャストして取得
 	/*
@@ -490,26 +605,27 @@ bool LoadXFile(LPCWSTR file_name)
 
 		GetBufferPointerを使用すればBufferの先頭のポインタが取得できる
 	*/
-	D3DXMATERIAL* materials = (D3DXMATERIAL*)g_XFile.Materials->GetBufferPointer();
+	D3DXMATERIAL* materials = (D3DXMATERIAL*)g_XFile[bomb].Materials->GetBufferPointer();
 
-	for(int i = 0; i < g_XFile.MaterialNum; i++)
+	for(int i = 0; i < g_XFile[bomb].MaterialNum; i++)
 	{
 		// pTextureFilenameがnullptrじゃなかったらテクスチャが使用されている
 		if(materials[i].pTextureFilename != nullptr)
 		{
-			LPSTR text = materials[i].pTextureFilename;
+			LPSTR char_file_name = materials[i].pTextureFilename;
 			wchar_t wtext[256];
-			mbstowcs(wtext, text, strlen(text) + 1 );
+			size_t ret;
+			mbstowcs_s(&ret, wtext, char_file_name, strlen(char_file_name) + 1 );
 			LPWSTR file_name = wtext;
 
 			D3DXCreateTextureFromFile(
 				g_Device,
 				file_name,
-				& g_XFile.Textures[i]);
+				& g_XFile[bomb].Textures[i]);
 		}
 		else
 		{
-			g_XFile.Textures[i] = nullptr;
+			g_XFile[bomb].Textures[i] = nullptr;
 		}
 	}
 
@@ -519,30 +635,30 @@ bool LoadXFile(LPCWSTR file_name)
 void ReleaseXFile()
 {
 	// テクスチャの解放
-	for(int i = 0; i < g_XFile.MaterialNum; i++)
+	for(int i = 0; i < g_XFile[XFileDateMax].MaterialNum; i++)
 	{
-		if(g_XFile.Textures[i] != nullptr)
+		if(g_XFile[bomb].Textures[i] != nullptr)
 		{
-			g_XFile.Textures[i]->Release();
-			g_XFile.Textures[i] = nullptr;
+			g_XFile[bomb].Textures[i]->Release();
+			g_XFile[bomb].Textures[i] = nullptr;
 		}
 	}
 
 	// テクスチャ配列も解放する
-	delete[] g_XFile.Textures;
+	delete[] g_XFile[bomb].Textures;
 
 	// マテリアルの解放
-	if(g_XFile.Materials != nullptr)
+	if(g_XFile[bomb].Materials != nullptr)
 	{
-		g_XFile.Materials->Release();
-		g_XFile.Materials = nullptr;
+		g_XFile[bomb].Materials->Release();
+		g_XFile[bomb].Materials = nullptr;
 	}
 
 	// メッシュの解放
-	if(g_XFile.Meshes != nullptr)
+	if(g_XFile[bomb].Meshes != nullptr)
 	{
-		g_XFile.Meshes->Release();
-		g_XFile.Meshes = nullptr;
+		g_XFile[bomb].Meshes->Release();
+		g_XFile[bomb].Meshes = nullptr;
 	}
 }
 

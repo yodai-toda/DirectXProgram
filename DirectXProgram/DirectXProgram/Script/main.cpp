@@ -171,6 +171,10 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
+	LoadXFile(TEXT("Res/Sample01.x"));
+
+	LPDIRECT3DTEXTURE9* Textures;
+
 	// メインループ
 	while (true)
 	{
@@ -246,6 +250,9 @@ int APIENTRY WinMain(
 
 			Draw3DPorigon(3.0f, 0.0f, 0.0f, 0xff0000ff);
 
+			DrawXFile();
+			DrawXFile( bomb, 1.0f, 2.0f, 0.0f, D3DXToRadian(0.0f), D3DXToRadian(45.0f), D3DXToRadian(0.0f), 1.0f, 1.0f, .0f);
+
 			FinishDrawing();
 		}
 	}
@@ -254,6 +261,7 @@ int APIENTRY WinMain(
 	ReleaseTexture();
 	ReleaseDirectInput();
 	ReleaseDirectGraphics();
+	ReleaseXFile();
 
 	return 0;
 }
